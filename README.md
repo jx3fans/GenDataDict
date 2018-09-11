@@ -10,3 +10,6 @@
 
 ## 配置说明
 + 修改mybatis-config.xml中数据库相关配置即可。
+
+## 其他
++ 几年前自学freemarker和mybatis时写的，很多年未更新过了，以后也不会再更新了。
