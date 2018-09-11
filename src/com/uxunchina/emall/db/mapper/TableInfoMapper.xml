@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.uxunchina.emall.db.mapper.TableInfoMapper">
+
+	<cache />
+	
+	<select id="getAllTables" resultType="TableInfo">
+		select t.TABLE_NAME, u.comments 
+		from all_tables t left join USER_TAB_COMMENTS u on t.TABLE_NAME = u.table_name
+		where t.OWNER = 'EMALL' order by t.TABLE_NAME
+	</select>
+
+<!-- 	<select id="getColumnsByTableName" resultType="Column"> -->
+<!-- 		select uc.COLUMN_NAME, uc.DATA_TYPE, uc.DATA_LENGTH, ucc.comments -->
+<!-- 		from user_tab_columns uc  -->
+<!-- 		left join user_col_comments ucc on uc.TABLE_NAME = ucc.table_name and uc.COLUMN_NAME = ucc.column_name -->
+<!-- 		where uc.TABLE_NAME = '${name}' order by uc.COLUMN_ID -->
+<!-- 	</select> -->
+
+	<select id="getColumnsByTableName" resultType="Column">
+		select uc.COLUMN_NAME, uc.DATA_TYPE, uc.DATA_LENGTH, uu.constraint_type, ucc.comments
+		from user_tab_columns uc 
+		left join user_col_comments ucc on uc.TABLE_NAME = ucc.table_name and uc.COLUMN_NAME = ucc.column_name
+		left join (
+			select cu.column_name, au.constraint_type ,cu.table_name
+			from user_cons_columns cu, user_constraints au 
+			where cu.constraint_name = au.constraint_name and au.constraint_type = 'P'
+		) uu on uu.column_name = uc.COLUMN_NAME and uu.table_name = uc.TABLE_NAME
+		where uc.TABLE_NAME = '${name}' order by uc.COLUMN_ID
+	</select>
+
+</mapper>
